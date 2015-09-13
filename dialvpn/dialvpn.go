@@ -2,15 +2,15 @@ package main
 
 import (
 	"bytes"
-	"os/exec"
+	"flag"
 	"github.com/axgle/mahonia"
+	"log"
+	"os/exec"
 	"regexp"
 	"strconv"
-	"sync"
-	"log"
-	"flag"
-	"time"
 	"strings"
+	"sync"
+	"time"
 )
 
 /**
@@ -22,7 +22,7 @@ description :
 	2. 使用rasdial 连接最优服务器
 */
 
-func runCommand(command string, args ...string) string{
+func runCommand(command string, args ...string) string {
 	cmd := exec.Command(command, args...)
 	out := bytes.Buffer{}
 	cmd.Stdout = &out
@@ -31,9 +31,10 @@ func runCommand(command string, args ...string) string{
 	}
 	cmdOutput := out.String()
 	enc := mahonia.NewDecoder("gbk")
-	cmdOutput =enc.ConvertString(cmdOutput)
+	cmdOutput = enc.ConvertString(cmdOutput)
 	return cmdOutput
 }
+
 //func getPingCmd() string {
 //	if path, err := exec.LookPath("ping"); err == nil {
 //		return path
@@ -41,6 +42,7 @@ func runCommand(command string, args ...string) string{
 //	return "C:/Windows/System32/ping"
 //}
 var avgRegex = regexp.MustCompile(`平均\ =\ (?P<avg>\d+)ms`)
+
 func getAvgTime(data string) int {
 	matched := avgRegex.FindStringSubmatch(data)
 	r, _ := strconv.ParseInt(matched[1], 10, 0)
@@ -48,6 +50,7 @@ func getAvgTime(data string) int {
 }
 
 var lostRegex = regexp.MustCompile(`已发送 = \d+，已接收 = \d+，丢失 = (?P<lost>\d+)`)
+
 func getLostNum(data string) int {
 	matched := lostRegex.FindStringSubmatch(data)
 	r, _ := strconv.ParseInt(matched[1], 10, 0)
@@ -60,9 +63,9 @@ func ping(address string) (int, int, error) {
 }
 
 type VPNInfo struct {
-	Name string
-	Host string
-	AvgTime int
+	Name        string
+	Host        string
+	AvgTime     int
 	LostPackage int
 }
 
@@ -71,7 +74,7 @@ func (this *VPNInfo) string() string {
 }
 
 func getVpnList() []*VPNInfo {
-	return []*VPNInfo {
+	return []*VPNInfo{
 		&VPNInfo{Name: "Yunti-HK1", Host: "hk1.seehey.com"},
 		&VPNInfo{Name: "Yunti-HK2", Host: "hk2.seehey.com"},
 		&VPNInfo{Name: "Yunti-TW1", Host: "tw1.seehey.com"},
@@ -88,14 +91,14 @@ func runVPNPinger(vpninfo *VPNInfo, waitGroup *sync.WaitGroup) {
 	}()
 }
 
-func chooseVPN(vpnList []*VPNInfo) *VPNInfo{
+func chooseVPN(vpnList []*VPNInfo) *VPNInfo {
 	var fastVpn *VPNInfo
 	fastVpn = vpnList[0]
-	for _, vpnInfo := range vpnList{
-		if vpnInfo.LostPackage > fastVpn.LostPackage{
+	for _, vpnInfo := range vpnList {
+		if vpnInfo.LostPackage > fastVpn.LostPackage {
 			continue
 		}
-		if (vpnInfo.LostPackage < fastVpn.LostPackage || vpnInfo.AvgTime < fastVpn.AvgTime){
+		if vpnInfo.LostPackage < fastVpn.LostPackage || vpnInfo.AvgTime < fastVpn.AvgTime {
 			fastVpn = vpnInfo
 		}
 	}
@@ -105,7 +108,7 @@ func chooseVPN(vpnList []*VPNInfo) *VPNInfo{
 var token string
 
 func getVPNAuth() (string, string) {
-	v :=strings.Split(token, "|")
+	v := strings.Split(token, "|")
 	return v[0], v[1]
 }
 
@@ -124,14 +127,14 @@ func main() {
 
 	waitGroup := &sync.WaitGroup{}
 	waitGroup.Add(vpnSize)
-	for _, vpninfo := range vpnList{
+	for _, vpninfo := range vpnList {
 		runVPNPinger(vpninfo, waitGroup)
 	}
 	log.Println("Waiting for speed result")
 	waitGroup.Wait()
 	log.Println("===============================")
 	log.Println("speed summary:")
-	for _, vpninfo := range vpnList{
+	for _, vpninfo := range vpnList {
 		log.Println(vpninfo)
 	}
 	log.Println("===============================")
