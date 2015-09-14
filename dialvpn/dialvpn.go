@@ -20,6 +20,8 @@ Created on 2015-09-12
 description :
 	1. 逐个ping备选服务器。
 	2. 使用rasdial 连接最优服务器
+
+	go install -ldflags "-X main.token username|password" github.com/mskyspet/gotools/dialvpn
 */
 
 func runCommand(command string, args ...string) string {
@@ -75,12 +77,12 @@ func (this *VPNInfo) string() string {
 
 func getVpnList() []*VPNInfo {
 	return []*VPNInfo{
-		&VPNInfo{Name: "Yunti-HK1", Host: "hk1.seehey.com"},
-		&VPNInfo{Name: "Yunti-HK2", Host: "hk2.seehey.com"},
-		&VPNInfo{Name: "Yunti-TW1", Host: "tw1.seehey.com"},
-		&VPNInfo{Name: "Yunti-JP1", Host: "jp1.seehey.com"},
-		&VPNInfo{Name: "Yunti-JP3", Host: "jp2.seehey.com"},
-		&VPNInfo{Name: "Yunti-JP2", Host: "jp3.seehey.com"},
+		&VPNInfo{Name: "Yunti-HK1-L2TP", Host: "p2.hk1.seehey.com"},
+		&VPNInfo{Name: "Yunti-HK2-L2TP", Host: "p2.hk2.seehey.com"},
+		&VPNInfo{Name: "Yunti-TW1-L2TP", Host: "p2.tw1.seehey.com"},
+		&VPNInfo{Name: "Yunti-JP1-L2TP", Host: "p2.jp1.seehey.com"},
+		&VPNInfo{Name: "Yunti-JP2-L2TP", Host: "p2.jp2.seehey.com"},
+		&VPNInfo{Name: "Yunti-JP3-L2TP", Host: "p2.jp3.seehey.com"},
 	}
 }
 
