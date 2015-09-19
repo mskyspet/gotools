@@ -7,11 +7,11 @@ import (
 	"log"
 	"os/exec"
 	"regexp"
+	"runtime"
 	"strconv"
 	"strings"
 	"sync"
 	"time"
-	"runtime"
 )
 
 /**
@@ -34,7 +34,6 @@ type VPNInfo struct {
 func (this *VPNInfo) string() string {
 	return "Name:" + this.Name + " Host:" + this.Host + " AvgTime:" + string(this.AvgTime) + " Lost:" + string(this.LostPackage)
 }
-
 
 type VPNDialer interface {
 	PingVpnList([]*VPNInfo)
@@ -65,7 +64,6 @@ func getAvgTime(data string) int {
 }
 
 type WindowsDialer struct {
-
 }
 
 func (this *WindowsDialer) runCommand(command string, args ...string) string {
@@ -117,7 +115,6 @@ func (this *WindowsDialer) Dial(vpnInfo *VPNInfo) {
 	time.Sleep(1 * time.Second)
 	log.Println(this.runCommand("rasdial", vpnInfo.Name, username, password))
 }
-
 
 func getVpnList() []*VPNInfo {
 	return []*VPNInfo{
